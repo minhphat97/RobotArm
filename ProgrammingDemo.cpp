@@ -711,7 +711,6 @@ double Segment_Time(JOINT& initial_point, JOINT & final_point)
 	return path_total_time;
 }
 
-
 int main(int argc, char* argv[])
 {
 	JOINT q1 = { 0, 0, 0, 0 }; // Used for ForwardKin
@@ -731,11 +730,11 @@ int main(int argc, char* argv[])
 	{
 		if (c != ESC)
 		{
-			printf("Press '1' for ForwardKin, '2' for InverseKin, '3' for Trajectory Plan\n");
+			printf("Press '1' for ForwardKin, '2' for InverseKin, '3' for Tracjectory Planner\n");
 			ch = _getch();
 			if (ch == '1')
 			{
-				printf("Press '1' to enter parameter values, '2' to go back, '3' to exit\n");
+				printf("Press '1' to enter parameter values, '2' to go back\n");
 				char ch1 = _getch();
 				if (ch1 == '1')
 				{
@@ -754,6 +753,9 @@ int main(int argc, char* argv[])
 					cout << "Z (mm): " << Where[2] << endl;
 					cout << "Phi angle (degree): " << Where[3] << endl;
 					MoveToConfiguration(q1);
+					/*cout << "To close the grabber press1, to open press0: \n";
+					cin >> grabber;
+					Grasp(grabber);*/
 				}
 				else if (ch1 == '2') {}
 				else
@@ -761,7 +763,7 @@ int main(int argc, char* argv[])
 			}
 			else if (ch == '2')
 			{
-				printf("Press '1' to enter parameter values, '2' to go back, '3' to exit\n");
+				printf("Press '1' to enter parameter values, '2' to go back\n");
 				double x, y, z, phi;
 				char ch2 = _getch();
 				if (ch2 == '1')
@@ -829,11 +831,21 @@ int main(int argc, char* argv[])
 						cout << "Both solutions are invalid !" << endl;
 						exit(0);
 					}
+
+					/*cout << "To close the grabber press1, to open press0: \n";
+					cin >> grabber;
+					Grasp(grabber);*/
 				}
-				else if (ch2 == '3') 
+				else if (ch2 == '2') {}
+				else
+					break;
+			}
+			else if (ch == '3')
+			{
+				printf("Press '1' to enter parameter values, '2' to go back\n");
+				char ch3 = _getch();
+				if (ch3 == '1')
 				{
-					//JOINT test = { 0,0,-100,0 }; // will erase later
-				//JOINT test2 = { 90, 90, -200, 45 }; // will erase later
 					double x1, y1, z1, phi1;
 					double x2, y2, z2, phi2;
 					double x3, y3, z3, phi3;
@@ -887,36 +899,8 @@ int main(int argc, char* argv[])
 					JOINT Via2_Cartesian = { Joint_Space[1][0], Joint_Space[1][1], Joint_Space[1][2], Joint_Space[1][3] };
 					JOINT Via3_Cartesian = { Joint_Space[2][0], Joint_Space[2][1], Joint_Space[2][2], Joint_Space[2][3] };
 					JOINT Goal_Cartesian = { Joint_Space[3][0], Joint_Space[3][1], Joint_Space[3][2], Joint_Space[3][3] };
-					//cout << "Joint_Space: " << endl;
-					//cout << Joint_Space[0][0] << " " << Joint_Space[0][1] << " " << Joint_Space[0][2] << " " << Joint_Space[0][3] << endl;
-					//cout << Joint_Space[1][0] << " " << Joint_Space[1][1] << " " << Joint_Space[1][2] << " " << Joint_Space[1][3] << endl;
-					//cout << Joint_Space[2][0] << " " << Joint_Space[2][1] << " " << Joint_Space[2][2] << " " << Joint_Space[2][3] << endl;
-					//cout << Joint_Space[3][0] << " " << Joint_Space[3][1] << " " << Joint_Space[3][2] << " " << Joint_Space[3][3] << endl;
-					/*cout << "Joint 1 coefficient: " << endl;
-					cout << "a0: " << coef_segment_1[0][0] << endl;
-					cout << "a1: " << coef_segment_1[0][1] << endl;
-					cout << "a2: " << coef_segment_1[0][2] << endl;
-					cout << "a3: " << coef_segment_1[0][3] << endl;
 
-					cout << "Joint 2 coefficient: " << endl;
-					cout << "a0: " << coef_segment_1[1][0] << endl;
-					cout << "a1: " << coef_segment_1[1][1] << endl;
-					cout << "a2: " << coef_segment_1[1][2] << endl;
-					cout << "a3: " << coef_segment_1[1][3] << endl;
-
-					cout << "Joint 3 coefficient: " << endl;
-					cout << "a0: " << coef_segment_1[2][0] << endl;
-					cout << "a1: " << coef_segment_1[2][1] << endl;
-					cout << "a2: " << coef_segment_1[2][2] << endl;
-					cout << "a3: " << coef_segment_1[2][3] << endl;
-
-					cout << "Joint 4 coefficient: " << endl;
-					cout << "a0: " << coef_segment_1[3][0] << endl;
-					cout << "a1: " << coef_segment_1[3][1] << endl;
-					cout << "a2: " << coef_segment_1[3][2] << endl;
-					cout << "a3: " << coef_segment_1[3][3] << endl;*/
-
-					double total_time_segment_1 = Segment_Time(current, Via1_Cartesian) + 1;
+					double total_time_segment_1 = Segment_Time(current, Via1_Cartesian);
 					cout << "path_total_time_segment_1: " << total_time_segment_1 << endl;
 
 					double total_time_segment_2 = Segment_Time(Via1_Cartesian, Via2_Cartesian);
@@ -945,7 +929,7 @@ int main(int argc, char* argv[])
 					cout << "total_2: " << total_time_segment_2 << endl;
 					cout << "total_3: " << total_time_segment_3 << endl;
 					cout << "total_4: " << total_time_segment_4 << endl;
-					cout << "total_1: " << remaining_time << endl;
+					cout << "time_remaining: " << remaining_time << endl;
 					double** coef_segment_1 = CUBCOEF(current, Via1_Cartesian, total_time_segment_1);
 					double** coef_segment_2 = CUBCOEF(Via1_Cartesian, Via2_Cartesian, total_time_segment_2);
 					double** coef_segment_3 = CUBCOEF(Via2_Cartesian, Via3_Cartesian, total_time_segment_3);
@@ -962,25 +946,6 @@ int main(int argc, char* argv[])
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
 						bool check1 = MoveWithConfVelAcc(position, velocity, acceleration);
-						/*cout << "Positions: " << endl;
-						cout << planner[0] << endl;
-						cout << planner[3] << endl;
-						cout << planner[6] << endl;
-						cout << planner[9] << endl;
-						cout << endl;
-						cout << "Velocities: " << endl;
-						cout << planner[1] << endl;
-						cout << planner[4] << endl;
-						cout << planner[7] << endl;
-						cout << planner[10] << endl;
-						cout << endl;
-						cout << "Accelerations: " << endl;
-						cout << planner[2] << endl;
-						cout << planner[5] << endl;
-						cout << planner[8] << endl;
-						cout << planner[11] << endl;
-						cout << endl;
-						cout << "Check 1: " << check1 << endl;*/
 						Sleep(step_time_segment_1 * 1000);
 						timing = timing + step_time_segment_1;
 						if (timing > total_time_segment_1)
@@ -1002,25 +967,6 @@ int main(int argc, char* argv[])
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
 						bool check2 = MoveWithConfVelAcc(position, velocity, acceleration);
-						/*cout << "Positions: " << endl;
-						cout << planner[0] << endl;
-						cout << planner[3] << endl;
-						cout << planner[6] << endl;
-						cout << planner[9] << endl;
-						cout << endl;
-						cout << "Velocities: " << endl;
-						cout << planner[1] << endl;
-						cout << planner[4] << endl;
-						cout << planner[7] << endl;
-						cout << planner[10] << endl;
-						cout << endl;
-						cout << "Accelerations: " << endl;
-						cout << planner[2] << endl;
-						cout << planner[5] << endl;
-						cout << planner[8] << endl;
-						cout << planner[11] << endl;
-						cout << endl;
-						cout << "Check 2: " << check2 << endl*/;
 						Sleep(step_time_segment_2 * 1000);
 						timing = timing + step_time_segment_2;
 						if (timing > total_time_segment_2)
@@ -1042,25 +988,6 @@ int main(int argc, char* argv[])
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
 						bool check3 = MoveWithConfVelAcc(position, velocity, acceleration);
-						/*cout << "Positions: " << endl;
-						cout << planner[0] << endl;
-						cout << planner[3] << endl;
-						cout << planner[6] << endl;
-						cout << planner[9] << endl;
-						cout << endl;
-						cout << "Velocities: " << endl;
-						cout << planner[1] << endl;
-						cout << planner[4] << endl;
-						cout << planner[7] << endl;
-						cout << planner[10] << endl;
-						cout << endl;
-						cout << "Accelerations: " << endl;
-						cout << planner[2] << endl;
-						cout << planner[5] << endl;
-						cout << planner[8] << endl;
-						cout << planner[11] << endl;
-						cout << endl;
-						cout << "Check 3: " << check3 << endl;*/
 						Sleep(step_time_segment_3 * 1000);
 						timing = timing + step_time_segment_3;
 						if (timing > total_time_segment_3)
@@ -1082,25 +1009,6 @@ int main(int argc, char* argv[])
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
 						bool check4 = MoveWithConfVelAcc(position, velocity, acceleration);
-						//cout << "Positions: " << endl;
-						//cout << planner[0] << endl;
-						//cout << planner[3] << endl;
-						//cout << planner[6] << endl;
-						//cout << planner[9] << endl;
-						//cout << endl;
-						//cout << "Velocities: " << endl;
-						//cout << planner[1] << endl;
-						//cout << planner[4] << endl;
-						//cout << planner[7] << endl;
-						//cout << planner[10] << endl;
-						//cout << endl;
-						//cout << "Accelerations: " << endl;
-						//cout << planner[2] << endl;
-						//cout << planner[5] << endl;
-						//cout << planner[8] << endl;
-						//cout << planner[11] << endl;
-						//cout << endl;
-						//cout << "Check 4: " << check4 << endl;
 						Sleep(step_time_segment_4 * 1000);
 						timing = timing + step_time_segment_4;
 						if (timing > total_time_segment_4)
@@ -1111,6 +1019,7 @@ int main(int argc, char* argv[])
 						}
 					}
 				}
+				else if (ch3 == '2') {}
 				else
 					break;
 			}
