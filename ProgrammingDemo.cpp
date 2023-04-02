@@ -1123,6 +1123,17 @@ int main(int argc, char* argv[])
 							break;
 						}
 					}
+					char Ch;
+					cout << "Please press 1 if you want to grasp item, press 2 if you want to release item, press 3 to skip: ";
+					cin >> Ch;
+					if (Ch == '1')
+					{
+						Grasp(true);
+					}
+					else if (Ch == '2')
+					{
+						Grasp(false);
+					}
 				}
 				else if (ch3 == '2') {}
 				else
