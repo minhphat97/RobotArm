@@ -442,52 +442,52 @@ double* PATHPLANNER(double** joint_coefficients, double time)
 	{
 		flag = 1;
 		cout << "ERROR: The velocity of joint 1 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 	if (joint1Acceleration < -600 || joint1Acceleration > 600)
 	{
 		flag = 1;
 		cout << "ERROR: The acceleration of joint 1 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 
 	if (joint2Velocity < -150 || joint2Velocity > 150)
 	{
 		flag = 1;
 		cout << "ERROR: The velocity of joint 2 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 	if (joint2Acceleration < -600 || joint2Acceleration > 600)
 	{
 		flag = 1;
 		cout << "ERROR: The acceleration of joint 2 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 
 	if (joint3Velocity < -50 || joint3Velocity > 50)
 	{
 		flag = 1;
 		cout << "ERROR: The velocity of joint 3 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 	if (joint3Acceleration < -200 || joint3Acceleration > 200)
 	{
 		flag = 1;
 		cout << "ERROR: The acceleration of joint 3 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 
 	if (joint4Velocity < -150 || joint4Velocity > 150)
 	{
 		flag = 1;
 		cout << "ERROR: The velocity of joint 4 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 	if (joint4Acceleration < -600 || joint4Acceleration > 600)
 	{
 		flag = 1;
 		cout << "ERROR: The acceleration of joint 4 is out of range limit !" << endl;
-		exit(0);
+		//exit(0);
 	}
 
 	double* joint_equations = new double[14];
@@ -935,6 +935,95 @@ int main(int argc, char* argv[])
 					double** coef_segment_3 = CUBCOEF(Via2_Cartesian, Via3_Cartesian, total_time_segment_3);
 					double** coef_segment_4 = CUBCOEF(Via3_Cartesian, Goal_Cartesian, total_time_segment_4);
 
+					//=============================================================PLOTTING=====================================================================
+					double plotting_time_segment1 = 0;
+					double step_time_segment_1_plotting = total_time_segment_1 / 10;
+					ofstream fout_position_segment("D:/ENSC488/CopytoYourDir2023/CopytoYourDir2023/joint_space_position_segment.csv");
+					ofstream fout_velocity_segment("D:/ENSC488/CopytoYourDir2023/CopytoYourDir2023/joint_space_velocity_segment.csv"); 
+					ofstream fout_acceleration_segment("D:/ENSC488/CopytoYourDir2023/CopytoYourDir2023/joint_space_acceleration_segment.csv");
+					while (true)
+					{
+						double* planner = PATHPLANNER(coef_segment_1, plotting_time_segment1);
+						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
+						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
+						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
+						double* plotXY = WHERE(position[0], position[1], position[2], position[3]);
+						fout_position_segment << plotting_time_segment1 << "," << planner[0] << "," << planner[3] << "," << planner[6] << "," << planner[9] << "," << plotXY[0] << "," << plotXY[1] << endl;
+						fout_velocity_segment << plotting_time_segment1 << "," << planner[1] << "," << planner[4] << "," << planner[7] << "," << planner[10] << endl;
+						fout_acceleration_segment << plotting_time_segment1 << "," << planner[2] << "," << planner[5] << "," << planner[8] << "," << planner[11] << endl;
+						cout << "DONE" << endl;
+						plotting_time_segment1 = plotting_time_segment1 + step_time_segment_1_plotting;
+						if (plotting_time_segment1 > total_time_segment_1)
+						{
+							break;
+						}
+					}
+
+					double plotting_time_segment2 = 0;
+					double step_time_segment_2_plotting = total_time_segment_2 / 10;
+					while (true)
+					{
+						double* planner = PATHPLANNER(coef_segment_2, plotting_time_segment2);
+						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
+						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
+						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
+						double* plotXY = WHERE(position[0], position[1], position[2], position[3]);
+						fout_position_segment << plotting_time_segment2 + plotting_time_segment1 << "," << planner[0] << "," << planner[3] << "," << planner[6] << "," << planner[9] << "," << plotXY[0] << "," << plotXY[1] << endl;
+						fout_velocity_segment << plotting_time_segment2 + plotting_time_segment1 << "," << planner[1] << "," << planner[4] << "," << planner[7] << "," << planner[10] << endl;
+						fout_acceleration_segment << plotting_time_segment2 + plotting_time_segment1 << "," << planner[2] << "," << planner[5] << "," << planner[8] << "," << planner[11] << endl;
+						cout << "DONE" << endl;
+						plotting_time_segment2 = plotting_time_segment2 + step_time_segment_2_plotting;
+						if (plotting_time_segment2 > total_time_segment_2)
+						{
+							break;
+						}
+					}
+					
+					double plotting_time_segment3 = 0;
+					double step_time_segment_3_plotting = total_time_segment_3 / 10;
+					while (true)
+					{
+						double* planner = PATHPLANNER(coef_segment_3, plotting_time_segment3);
+						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
+						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
+						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
+						double* plotXY = WHERE(position[0], position[1], position[2], position[3]);
+						fout_position_segment << plotting_time_segment3 + plotting_time_segment2 + plotting_time_segment1 << "," << planner[0] << "," << planner[3] << "," << planner[6] << "," << planner[9] << "," << plotXY[0] << "," << plotXY[1] << endl;
+						fout_velocity_segment << plotting_time_segment3 + plotting_time_segment2 + plotting_time_segment1 << "," << planner[1] << "," << planner[4] << "," << planner[7] << "," << planner[10] << endl;
+						fout_acceleration_segment << plotting_time_segment3 + plotting_time_segment2 + plotting_time_segment1 << "," << planner[2] << "," << planner[5] << "," << planner[8] << "," << planner[11] << endl;
+						cout << "DONE" << endl;
+						plotting_time_segment3 = plotting_time_segment3 + step_time_segment_3_plotting;
+						if (plotting_time_segment3 > total_time_segment_3)
+						{
+							break;
+						}
+					}
+
+					double plotting_time_segment4 = 0;
+					double step_time_segment_4_plotting = total_time_segment_4 / 10;
+					while (true)
+					{
+						double* planner = PATHPLANNER(coef_segment_4, plotting_time_segment4);
+						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
+						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
+						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
+						double* plotXY = WHERE(position[0], position[1], position[2], position[3]);
+						fout_position_segment << plotting_time_segment4 + plotting_time_segment3 + plotting_time_segment2 + plotting_time_segment1 << "," << planner[0] << "," << planner[3] << "," << planner[6] << "," << planner[9] << "," << plotXY[0] << "," << plotXY[1] << endl;
+						fout_velocity_segment << plotting_time_segment4 + plotting_time_segment3 + plotting_time_segment2 + plotting_time_segment1 << "," << planner[1] << "," << planner[4] << "," << planner[7] << "," << planner[10] << endl;
+						fout_acceleration_segment << plotting_time_segment4 + plotting_time_segment3 + plotting_time_segment2 + plotting_time_segment1 << "," << planner[2] << "," << planner[5] << "," << planner[8] << "," << planner[11] << endl;
+						cout << "DONE" << endl;
+						plotting_time_segment4 = plotting_time_segment4 + step_time_segment_4_plotting;
+						if (plotting_time_segment4 > total_time_segment_4)
+						{
+							break;
+						}
+					}
+					fout_position_segment.close();
+					fout_velocity_segment.close();
+					fout_acceleration_segment.close();
+
+
+					//==============================================MOVING ROBOT ARM=====================================================
 					double timing = 0;
 					double step_time_segment_1 = total_time_segment_1 / 10;
 					while (true)
@@ -942,6 +1031,10 @@ int main(int argc, char* argv[])
 						cout << "################################################" << endl;
 						cout << "At timing = " << timing << endl;
 						double* planner = PATHPLANNER(coef_segment_1, timing);
+						if (planner[13] == 1)
+						{
+							exit(0);
+						}
 						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
@@ -963,6 +1056,10 @@ int main(int argc, char* argv[])
 						cout << "################################################" << endl;
 						cout << "At timing = " << timing << endl;
 						double* planner = PATHPLANNER(coef_segment_2, timing);
+						if (planner[13] == 1)
+						{
+							exit(0);
+						}
 						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
@@ -984,6 +1081,10 @@ int main(int argc, char* argv[])
 						cout << "################################################" << endl;
 						cout << "At timing = " << timing << endl;
 						double* planner = PATHPLANNER(coef_segment_3, timing);
+						if (planner[13] == 1)
+						{
+							exit(0);
+						}
 						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
@@ -1005,6 +1106,10 @@ int main(int argc, char* argv[])
 						cout << "################################################" << endl;
 						cout << "At timing = " << timing << endl;
 						double* planner = PATHPLANNER(coef_segment_4, timing);
+						if (planner[13] == 1)
+						{
+							exit(0);
+						}
 						JOINT position = { planner[0], planner[3], planner[6], planner[9] };
 						JOINT velocity = { planner[1], planner[4], planner[7], planner[10] };
 						JOINT acceleration = { planner[2], planner[5], planner[8], planner[11] };
